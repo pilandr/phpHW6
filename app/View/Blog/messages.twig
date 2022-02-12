@@ -1,0 +1,48 @@
+<style>
+    .message { margin: 5px 0 0 5px; border: 1px solid grey; width: 100%; min-height: 100px; padding: 5px; background: darkgray}
+    .author { margin-left: 10px; }
+    .text { padding-left: 15px; padding-top: 15px; }
+    .date {color: black; font-size: 11px;}
+    .admin a { color: #46468b; float: right; padding-right: 15px; }
+</style>
+
+Пользователь: {{ user.getName() }}
+<form action="/user/logout" method="post">
+    <input type="submit" value="Выход">
+</form> <br><br>
+Шаблон twig <br><br>
+
+Список сообщений: <br>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="message">
+            {% if user.isAdmin() %}
+                <div class="admin">
+                    <a href="/admin/deleteMessage/?id={{ message.getId() }}">delete</a>
+                </div>
+            {% endif %}
+            <span class="date">{{ message.getCreatedAt() }}</span>
+            {% set author = message.getAuthor() %}
+            {% if author %}
+                <span class="author">{{ author.getName() }}</span>
+            {% else %}
+                <span class="author">Сообщение от удаленного пользователя</span>
+            {% endif %}
+            <div class="text">{{ message.getText() }}</div>
+            {% if message.getImage() %}
+                <div><img src="/upload/{{ message.getImage() }}" style="width: 150px;"></div>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% else %}
+    Сообщений пока нет
+{% endif %}
+
+<br><br>
+Добавить сообщение
+<form enctype="multipart/form-data" action="/blog/addMessage" method="post">
+    <textarea style="width: 100%; height: 50px;" type="text" value="" name="text"></textarea><br><br>
+    Изображение: <input type="file" name="image"><br>
+    <input type="submit" value="Отправить">
+</form>

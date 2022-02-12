@@ -1,0 +1,52 @@
+<style>
+    .message { margin: 5px 0 0 5px; border: 1px solid grey; width: 100%; min-height: 100px; padding: 5px; background: darkgray}
+    .author { margin-left: 10px; }
+    .text { padding-left: 15px; padding-top: 15px; }
+    .date {color: black; font-size: 11px;}
+    .admin a { color: #46468b; float: right; padding-right: 15px; }
+</style>
+
+<?php
+/** @var $message \App\Model\Message */
+/** @var $user \App\Model\User */
+$user = $this->user;
+?>
+
+Пользователь: <?php echo $user->getName()?>
+<form action="/user/logout" method="post">
+    <input type="submit" value="Выход">
+</form> <br><br>
+Шаблон phtml <br><br>
+Список сообщений: <br>
+
+<?php if($messages = $this->messages): ?>
+    <?php foreach ($messages as $message): ?>
+        <div class="message">
+            <?php if($user->isAdmin()): ?>
+                <div class="admin">
+                    <a href="/admin/deleteMessage/?id=<?=$message->getId();?>">delete</a>
+                </div>
+            <?php endif; ?>
+            <span class="date"><?=$message->getCreatedAt();?> </span>
+            <?php if($author = $message->getAuthor()):?>
+                <span class="author"><?=htmlspecialchars($author->getName());?></span>
+            <?php else: ?>
+                <span class="author">Сообщение от удаленного пользователя</span>
+            <?php endif; ?>
+            <div class="text"><?=htmlspecialchars(nl2br($message->getText()));?></div>
+            <?php if($message->getImage()):?>
+                <div><img src="/upload/<?=$message->getImage();?>" style="width: 150px;"></div>
+            <?php endif;?>
+        </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    Сообщений пока нет
+<?php endif; ?>
+
+<br><br>
+Добавить сообщение
+<form enctype="multipart/form-data" action="/blog/addMessage" method="post">
+    <textarea style="width: 100%; height: 50px;" type="text" value="" name="text"></textarea><br><br>
+    Изображение: <input type="file" name="image"><br>
+    <input type="submit" value="Отправить">
+</form>

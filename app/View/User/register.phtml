@@ -1,0 +1,47 @@
+<div id="formAuth">
+    Авторизация:
+    <form action="/user/login" method="post">
+        Email: <br> <input type="email" name="email"> <br>
+        Пароль: <br> <input type="password" name="password"> <br><br>
+        <input type="submit" value="Авторизироваться">
+    </form>
+    <br>
+    <div id="registration" style="text-decoration: underline; cursor: pointer">Регистрация</div>
+</div>
+
+<div id="formReg" hidden>
+    Регистрация:
+    <form action="/user/register" method="post">
+        Имя: <br> <input type="text" name="name"> <br>
+        Email: <br> <input type="email" name="email"> <br>
+        Пароль: <br> <input type="password" name="password"> <br>
+        Подтвердить пароль: <br> <input type="password" name="password2"> <br><br>
+        <input type="submit" value="Зарегистрироваться">
+    </form>
+    <br>
+    <div id="auth" style="text-decoration: underline; cursor: pointer">Авторизация</div>
+</div>
+
+<br>
+<br>
+
+<script>
+    document.getElementById('registration').onclick = function() {
+        const auth = document.getElementById('formAuth');
+        auth.hidden = true;
+        const reg = document.getElementById('formReg');
+        reg.hidden = false;
+    }
+    document.getElementById('auth').onclick = function() {
+        const reg = document.getElementById('formReg');
+        reg.hidden = true;
+        const auth = document.getElementById('formAuth');
+        auth.hidden = false;
+    }
+</script>
+
+
+<?php
+if($this->error): ?>
+    <span style="color: red"><?=$this->error;?></span>
+<?php endif; ?>
