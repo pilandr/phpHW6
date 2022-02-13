@@ -40,5 +40,12 @@ abstract class AbstractController
         return $user;
     }
 
+    public function preDispatch()
+    {
+        if ($this->getUser()) {
+            $this->view->assign('user', $this->getUser());
+        }
+    }
+
 
 }

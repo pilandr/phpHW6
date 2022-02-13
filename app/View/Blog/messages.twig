@@ -4,12 +4,17 @@
     .text { padding-left: 15px; padding-top: 15px; }
     .date {color: black; font-size: 11px;}
     .admin a { color: #46468b; float: right; padding-right: 15px; }
+    .controlBtn { display: inline-block; color : black; padding: 5px; background: aliceblue ; text-decoration: none; border: 1px solid black}
 </style>
 
 Пользователь: {{ user.getName() }}
 <form action="/user/logout" method="post">
     <input type="submit" value="Выход">
-</form> <br><br>
+</form>
+{% if user.isAdmin() %}
+    <a class="controlBtn" href="/admin/users">Управление пользователями</a>
+{% endif %}
+<br><br>
 Шаблон twig <br><br>
 
 Список сообщений: <br>

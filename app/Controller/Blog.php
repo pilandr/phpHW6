@@ -14,17 +14,7 @@ class Blog extends AbstractController
             $this->redirect('/');
         }
         $messages = Message::getList();
-//        if ($messages) {
-//            $userIds = array_map(function (Message $message) {
-//                return $message->getAuthorId();
-//            }, $messages);
-//            $users = \App\Model\User::getByIds($userIds);
-//            array_walk($messages, function (Message $message) use ($users) {
-//                if (isset($users[$message->getAuthorId()])) {
-//                    $message->setAuthor($users[$message->getAuthorId()]);
-//                }
-//            });
-//        }
+
         return $this->view->render('Blog\messages', [
             'messages' => $messages,
             'user' => $this->getUser()

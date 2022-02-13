@@ -24,9 +24,11 @@ class Application
             $this->initController();
             $this->initAction();
 
-            $view = new TwigView();
+            $view = new HtmlView();
             $this->controller->setView($view);
             $this->initUser();
+
+
 
             $content = $this->controller->{$this->actionName}();
             echo $content;
@@ -47,6 +49,7 @@ class Application
             $user = \App\Model\User::getById($id);
             if ($user) {
                 $this->controller->setUser($user);
+                $this->controller->preDispatch();
             }
         }
     }
@@ -60,6 +63,10 @@ class Application
         //$this->route->addRoute('/user/register', \App\Controller\User::class, 'register');
         ///** @uses \App\Controller\Blog::indexAction() */
         $this->route->addRoute('/blog', \App\Controller\Blog::class, 'index');
+        $this->route->addRoute('/admin/users', \App\Controller\Admin\Users::class, 'index');
+        $this->route->addRoute('/admin/addUser', \App\Controller\Admin\Users::class, 'addUser');
+        $this->route->addRoute('/admin/deleteUser', \App\Controller\Admin\Users::class, 'deleteUser');
+        $this->route->addRoute('/admin/saveUser', \App\Controller\Admin\Users::class, 'saveUser');
         //$this->route->addRoute('/blog/index', \App\Controller\Blog::class, 'index');
     }
 

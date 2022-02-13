@@ -1,0 +1,141 @@
+<style>
+    .user { margin: 5px 0 0 5px; border: 1px solid grey; width: 850px; min-height: 70px;}
+    .admin a { color: #46468b; float: right; padding-right: 15px; }
+</style>
+
+<?php
+/** @var $message \App\Model\Eloquent\Message */
+/** @var $user \App\Model\Eloquent\User */
+$user = $this->user;
+?>
+
+Вы вошли как <?=$user->getName();?>#<?=$user->getId();?> <a href="/blog">выйти</a>
+<br><br>
+
+Список пользователей:
+<br><br>
+
+<?php if($users = $this->users): ?>
+    <?php foreach ($users as $user): ?>
+        <div class="user" id="user_block_<?=$user->getId();?>">
+            id: <?=$user->getId();?>
+            name: <input type="text" id="user_name_<?=$user->getId();?>" value="<?=htmlspecialchars($user->getName());?>">
+            email: <input type="email" id="user_email_<?=$user->getId();?>" value="<?=htmlspecialchars($user->email);?>">
+            password: <input type="text" id="user_password_<?=$user->getId();?>">
+            <br>
+            <input type="button" onclick="saveUser(<?=$user->getId();?>);" value="Сохранить">
+            <input type="button" onclick="deleteUser(<?=$user->getId();?>);" value="Удалить">
+
+            <div id="resp_<?=$user->getId();?>">
+            </div>
+        </div>
+    <?php endforeach; ?>
+<?php else: ?>
+    Сообщений пока нет
+<?php endif; ?>
+
+Добавить пользователя
+
+name: <input type="text" id="user_name"> <br>
+email: <input type="email" id="user_email"> <br>
+password: <input type="text" id="user_password">
+<input type="button" value="Отправить" onclick="addUser();">
+<div id="resp">
+
+</div>
+
+<script>
+    async function saveUser(userId)
+    {
+        const message = document.querySelector('#resp_' + userId);
+        const name = document.querySelector('#user_name_' + userId).value;
+        const email = document.querySelector('#user_email_' + userId).value;
+        const password = document.querySelector('#user_password_' + userId).value;
+
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('email', email);
+        formData.append('password', password);
+        formData.append('id', userId);
+        try {
+            let response = await fetch('/admin/saveUser', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            if (result.result) {
+                message.innerHTML = '<span style="color:green">' + result.result + '</span>';
+            } else {
+                message.innerHTML = '<span style="color:red">' + result.error + '</span>';
+            }
+            console.log(result)
+        } catch (e)
+        {
+            console.log(e.message)
+            message.innerHTML = '<span style="color:red">' + e.message + '</span>';
+        }
+
+    }
+
+    async function deleteUser(userId)
+    {
+        const message = document.querySelector('#resp_' + userId);
+        const userBlock = document.querySelector('#user_block_' + userId);
+        const formData = new FormData();
+        formData.append('id', userId);
+        try {
+            let response = await fetch('/admin/deleteUser', {
+                method: 'POST',
+                body: formData
+            });
+
+            let result = await response.json();
+            if (result.result) {
+                userBlock.remove();
+                alert('Пользователь удален')
+            } else {
+                message.innerHTML = '<span style="color:red">' + result.error + '</span>';
+            }
+            console.log(result)
+        } catch (e)
+        {
+            console.log(e.message)
+            message.innerHTML = '<span style="color:red">' + e.message + '</span>';
+        }
+    }
+
+    async function addUser()
+    {
+        const name = document.querySelector('#user_name').value;
+        const email = document.querySelector('#user_email').value;
+        const password = document.querySelector('#user_password').value;
+        const message = document.querySelector('#resp');
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('email', email);
+        formData.append('password', password);
+
+        try {
+            let response = await fetch('/admin/addUser', {
+                method: 'POST',
+                body: formData
+            });
+
+            let result = await response.json();
+            if (result.result) {
+                message.innerHTML = '<span style="color:green">' + result.result + '</span>';
+                alert('Пользователь добавлен')
+                location.reload();
+            } else {
+                message.innerHTML = '<span style="color:red">' + result.error + '</span>';
+            }
+        } catch (e)
+        {
+            console.log(e.message)
+            message.innerHTML = '<span style="color:red">' + e.message + '</span>';
+        }
+
+    }
+</script>
+
